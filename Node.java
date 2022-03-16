@@ -1,7 +1,7 @@
 public class Node {
     
     public String word;   //data
-    public boolean color; //color of the node (true, red) & (false, black)
+    public String color; //color of the node
     public Node p;        //parent
     public Node l;        //left child
     public Node r;        //right child
@@ -11,14 +11,14 @@ public class Node {
     //contructors
     public Node(){
         this.word = null;
-        this.color = true; //new node is always (true, red)
+        this.color = "red"; //new node is always "red"
         this.p = null;
         this.l = null;
         this.r = null;
     }
     public Node (String word) {
         this.word = word;
-        this.color = true; //new node is always (true, red)
+        this.color = "red"; //new node is always "red"
         this.p = null;
         this.l = null;
         this.r = null;

@@ -146,7 +146,7 @@ public class BST {
     }
 
     //a method to update height and balance of the node's ancestors after deletion operation
-    private void update_balance_and_height(Node node){
+    private void update_height_for_deletion(Node node){
         Node parent = node.p;
         //if we reached the root
         if(parent == null)
@@ -155,7 +155,7 @@ public class BST {
             return;
         }
         this.update_height(node);
-        this.update_balance_and_height(parent);
+        this.update_height_for_deletion(parent);
     }
 
     public void delete(String word){
@@ -180,7 +180,7 @@ public class BST {
                     if(parent.l == node){parent.l = null;}
                     else{parent.r = null;}
                     node.p = null;
-                    this.update_balance_and_height(parent);
+                    this.update_height_for_deletion(parent);
                 }
                 this.size--;
             }
@@ -210,7 +210,7 @@ public class BST {
                     }
                     else{parent.r = child;}
                     node.p = null;
-                    this.update_balance_and_height(parent);
+                    this.update_height_for_deletion(parent);
                     this.size--;
                 }
             }
