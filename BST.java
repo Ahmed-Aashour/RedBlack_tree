@@ -143,15 +143,20 @@ public class BST {
         this.update_height_for_deletion(parent);
     }
 
-    public void delete(String word){
+    // Delete the node associated with the given value.
+    // Return true in case of success and false otherwise
+    public boolean delete(String word){
         Node node = this.search(this.root, word);
+        Node x = null;
+        String colorOfDeletedNode;
         //if the word to be deleted is null return
         if(node == null){
             System.out.println(word + " not found");
-            return;
+            return false;
         }
         else
         {
+            colorOfDeletedNode = node.color;
             //if the node has no children
             Node parent = node.p;
             if(node.l == null && node.r == null)
@@ -200,7 +205,72 @@ public class BST {
                 }
             }
         }
+        if(colorOfDeletedNode == "black"){
+            this.delete_fixup(x);
+        }
         this.height = this.root == null ? -1 : this.root.h;
+        return true;
+    }
+
+    private void delete_fixup(Node x){
+        Node ww;
+        while(x != this.root && x.color == "black"){
+            if(x == x.p.l)
+            {
+                ww = x.p.r;
+                if(ww.color == "red"){ //case 1
+                    ww.color = "black";
+                    x.p.color = "red";
+                    this.LeftRotation(x.p);
+                    ww = x.p.r;
+                }
+                if(ww.l.color == "black" && ww.r.color == "black"){ //case 2
+                    ww.color = "red";
+                    x = x.p;
+                }
+                else{
+                    if(ww.r.color == "black"){ //case 3
+                        ww.l.color = "black";
+                        ww.color = "red";
+                        this.RightRotation(ww);
+                        ww = x.p.r;
+                    }
+                    ww.color = x.p.color; //case 4
+                    x.p.color = "black";
+                    ww.r.color = "black";
+                    this.LeftRotation(x.p);
+                    x = this.root;
+                }
+            }
+            else
+            {
+                ww = x.p.l;
+                if(ww.color == "red"){ //case 1
+                    ww.color = "black";
+                    x.p.color = "red";
+                    this.RightRotation(x.p);
+                    ww = x.p.l;
+                }
+                if(ww.r.color == "black" && ww.l.color == "black"){ //case 2
+                    ww.color = "red";
+                    x = x.p;
+                }
+                else{
+                    if(ww.l.color == "black"){ //case 3
+                        ww.r.color = "black";
+                        ww.color = "red";
+                        this.LeftRotation(ww);
+                        ww = x.p.l;
+                    }
+                    ww.color = x.p.color; //case 4
+                    x.p.color = "black";
+                    ww.l.color = "black";
+                    this.RightRotation(x.p);
+                    x = this.root;
+                }
+            }
+        }
+        x.color = "black";
     }
 
 
