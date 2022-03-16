@@ -122,21 +122,6 @@ public class BST {
         return lNode;
     }
 
-    private Node Left_RightRotation(Node node) {
-        if(node == root) root = node.l.r;
-        node = this.LeftRotation(node.l);
-        node.p.l = node; //attach the resulting tree to the pivot
-        node = this.RightRotation(node.p);
-        return node;
-    }
-
-    private Node Right_LeftRotation(Node node) {
-        if(node == root) root = node.r.l;
-        node = this.RightRotation(node.r);
-        node.p.r = node; //attach the resulting tree to the pivot
-        node = this.LeftRotation(node.p);
-        return node;
-    }
     private void update_height(Node node){
         if(node.l == null
         && node.r == null)       node.h = 0; //leaf node
