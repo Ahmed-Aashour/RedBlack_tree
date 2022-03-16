@@ -10,6 +10,45 @@ public class BST {
         size = 0;
     }
 
+    // return the root of the given Red black tree
+    public Node getRoot(){
+        return this.root;
+    }
+
+    // return whether the given tree isEmpty or not
+    public boolean isEmpty(){
+        return this.size == 0 || this.height == -1;
+    }
+
+    // Clear all nodes in the given tree
+    public void clear(){
+        this.root = null;
+        this.height = -1;
+        this.size = 0;
+    }
+
+    // return the node associated with the given key or null if no value is found
+    public Node search(Node node, String word){
+        if(node == null){ //Not Found ):
+            return null;
+        }
+        else if (word.compareTo(node.word) == 0){ //Found (;
+            return node;
+        }
+        else if (word.compareTo(node.word) < 0){ //go left
+            node = search(node.l, word);
+        }
+        else if (word.compareTo(node.word) > 0){ //go right
+            node = search(node.r, word);
+        }
+        return node;
+    }
+
+    // return true if the tree contains the given value and false otherwise
+    public boolean contains(String word){
+        return this.search(this.root, word) != null;
+    }
+
     public Node insert(Node node, String word){
         if(node == null){ //Not found, so insert it
             Node newNode = new Node(word);
@@ -117,23 +156,6 @@ public class BST {
         }
         this.update_height(node);
         this.update_balance_and_height(parent);
-    }
-
-    // a method that searches for a string in the tree
-    public Node search(Node node, String word){
-        if(node == null){ //Not Found ):
-            return null;
-        }
-        else if (word.compareTo(node.word) == 0){ //Found (;
-            return node;
-        }
-        else if (word.compareTo(node.word) < 0){ //go left
-            node = search(node.l, word);
-        }
-        else if (word.compareTo(node.word) > 0){ //go right
-            node = search(node.r, word);
-        }
-        return node;
     }
 
     public void delete(String word){
