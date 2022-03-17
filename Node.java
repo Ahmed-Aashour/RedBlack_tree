@@ -6,7 +6,6 @@ public class Node {
     public Node l;        //left child
     public Node r;        //right child
     public int h = 0;     //height of the subtree (if root --> height of the tree)
-    public int Bh = 0;    //black height of the node
 
     //contructors
     public Node(){
@@ -20,6 +19,15 @@ public class Node {
         this.word = word;
         this.color = "red"; //new node is always "red"
         this.p = null;
+        this.l = null;
+        this.r = null;
+    }
+
+    //constructor made only for delete() in RB tree
+    public Node(Node parent, String color){
+        this.word = null;
+        this.color = color; //new node is always "red"
+        this.p = parent;
         this.l = null;
         this.r = null;
     }

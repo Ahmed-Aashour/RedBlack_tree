@@ -228,7 +228,7 @@ public class BST {
             System.out.println(word + " not found");
             return false;
         }
-        Node Replacement = null;
+        // Node Replacement = null;
         String colorOfDeletedNode = node.color;
         //if the node has no children
         Node parent = node.p;
@@ -240,8 +240,27 @@ public class BST {
             }
             else
             {
-                if(parent.l == node){parent.l = null;}
-                else{parent.r = null;}
+                Node s = new Node(parent, black);
+                if(parent.l == node){
+                    parent.l = s;
+                    //fixing-up
+                    if(colorOfDeletedNode == black){
+                        this.delete_fixup(parent.l);
+                    }
+                }
+                else{
+                    parent.r = s;
+                    //fixing-up
+                    if(colorOfDeletedNode == black){
+                        this.delete_fixup(parent.r);
+                    }
+                }
+                if(s.p.l == s){
+                    s.p.l = null;
+                }
+                else{
+                    s.p.r = null;
+                }
                 node.p = null;
                 this.update_height_for_deletion(parent);
             }
@@ -254,7 +273,6 @@ public class BST {
             String temp = successor.word;
             this.delete(successor.word);
             node.word = temp;
-            Replacement = node;
         }
         //if the node has only one child
         else
@@ -277,71 +295,78 @@ public class BST {
                 this.update_height_for_deletion(parent);
                 this.size--;
             }
-            Replacement = child;
-        }
-        // if the color of deleted node is black,
-        // it will violates the Red-Black property,
-        // calling delete_fixup() will maintain it
-        if(colorOfDeletedNode == black){
-            this.delete_fixup(Replacement);
+            //fixing-up
+            if(colorOfDeletedNode == black){
+                this.delete_fixup(child);
+            }
         }
         this.height = this.root == null ? -1 : this.root.h;
         return true;
     }
 
     private void delete_fixup(Node node){
-        Node ww;
+        Node sib; //sibling
         while(node != this.root && node.color == black){
             if(node == node.p.l)
             {
-                ww = node.p.r;
-                if(ww.color == red){ //case 1
-                    ww.color = black;
+                // System.out.println("-->left child");
+                sib = node.p.r;
+                if(sib.color == red){ //case 1
+                    // System.out.println("case 1");
+                    sib.color = black;
                     node.p.color = red;
                     this.LeftRotation(node.p);
-                    ww = node.p.r;
+                    sib = node.p.r;
                 }
-                if(ww.l.color == black && ww.r.color == black){ //case 2
-                    ww.color = red;
+                if( (sib.l == null || sib.l.color == black) &&  (sib.r == null || sib.r.color == black)){ //case 2
+                    // System.out.println("case 2");
+                    sib.color = red;
                     node = node.p;
                 }
                 else{
-                    if(ww.r.color == black){ //case 3
-                        ww.l.color = black;
-                        ww.color = red;
-                        this.RightRotation(ww);
-                        ww = node.p.r;
+                    if(sib.r == null || sib.r.color == black){ //case 3
+                        // System.out.println("case 3");
+                        sib.l.color = black;
+                        sib.color = red;
+                        this.RightRotation(sib);
+                        sib = node.p.r;
                     }
-                    ww.color = node.p.color; //case 4
+                    // System.out.println("case 4");
+                    sib.color = node.p.color; //case 4
                     node.p.color = black;
-                    ww.r.color = black;
+                    sib.r.color = black;
                     this.LeftRotation(node.p);
                     node = this.root;
                 }
             }
             else
             {
-                ww = node.p.l;
-                if(ww.color == red){ //case 1
-                    ww.color = black;
+                // System.out.println("right child");
+                sib = node.p.l;
+                if(sib.color == red){ //case 1
+                    // System.out.println("case 1");
+                    sib.color = black;
                     node.p.color = red;
                     this.RightRotation(node.p);
-                    ww = node.p.l;
+                    sib = node.p.l;
                 }
-                if(ww.r.color == black && ww.l.color == black){ //case 2
-                    ww.color = red;
+                if((sib.r == null || sib.r.color == black) && (sib.l == null || sib.l.color == black)){ //case 2
+                    // System.out.println("case 2");
+                    sib.color = red;
                     node = node.p;
                 }
                 else{
-                    if(ww.l.color == black){ //case 3
-                        ww.r.color = black;
-                        ww.color = red;
-                        this.LeftRotation(ww);
-                        ww = node.p.l;
+                    if(sib.l == null || sib.l.color == black){ //case 3
+                        // System.out.println("case 3");
+                        sib.r.color = black;
+                        sib.color = red;
+                        this.LeftRotation(sib);
+                        sib = node.p.l;
                     }
-                    ww.color = node.p.color; //case 4
+                    // System.out.println("case 4");
+                    sib.color = node.p.color; //case 4
                     node.p.color = black;
-                    ww.l.color = black;
+                    sib.l.color = black;
                     this.RightRotation(node.p);
                     node = this.root;
                 }
