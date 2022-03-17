@@ -1,9 +1,9 @@
 public class BST {
-
     public Node root = null;
     public int height;
     public int size;
-
+    private final String black = "black";
+    private final String red = "red";
     //constructor
     public BST (){
         this.height = -1; // (-1) --> empty tree
@@ -52,7 +52,11 @@ public class BST {
     public Node insert(Node node, String word){
         if(node == null){ //Not found, so insert it
             Node newNode = new Node(word);
-            if (height == -1) root = newNode; //empty tree
+            if (height == -1) 
+            {
+                this.root = newNode; //empty tree
+                this.root.color = black;
+            }
             node = newNode;
             size++; //increment the words number
         }
@@ -61,21 +65,93 @@ public class BST {
         else{ //go down the tree
             if (word.compareTo(node.word) < 0){
                 Node lNode = insert(node.l, word); //GOTO left child
-                node.l = lNode;
-                lNode.p = node; //Parent link 
+                if(lNode.word.equalsIgnoreCase(word))
+                {
+                    node.l = lNode;
+                    lNode.p = node; //Parent link
+                    if(lNode.p != null && lNode.p.color == red)
+                    {
+                        
+                        this.insert_fixup(lNode);
+                    }  
+                } 
             }
             else if (word.compareTo(node.word) > 0){
                 Node rNode = insert(node.r, word); //GOTO right child
-                node.r = rNode;
-                rNode.p = node; //Parent link
+                if(rNode.word.equalsIgnoreCase(word))
+                {
+                    node.r = rNode;
+                    rNode.p = node; //Parent link
+                    if(rNode.p != null && rNode.p.color == red)
+                    {
+                        this.insert_fixup(rNode);
+                    } 
+                }
             }
-            update_height(node); //updating the Node Height (h)
-
-            //performing Rotations, if any/////////////////////////////////////
-            
+            update_height(node); //updating the Node Height (h)          
         }
         this.height = this.root.h; //update the Tree Height
         return node;
+    }
+
+    private void insert_fixup(Node node)
+    {
+        while (node.p != null && node.p.color == red)
+        {
+            // if the parent is the left child of the grandparent
+            if(node.p == node.p.p.l)
+            {
+                Node y = node.p.p.r;//the uncle
+                //first case red uncle
+                if(y != null && y.color == red)
+                {
+                    node.p.color = black;
+                    y.color = black;
+                    node.p.p.color = red;
+                    node = node.p.p;
+                }
+                //second case uncle is black and the new node is the right child
+                else 
+                {
+                    if(node == node.p.r)
+                    {
+                        node = node.p;
+                        this.LeftRotation(node);
+                    }
+                    //third case
+                    node.p.color = black;
+                    node.p.p.color = red;
+                    this.RightRotation(node.p.p);
+                }
+                
+            }
+            else
+            {
+                Node y = node.p.p.l;//the uncle
+                //first case red uncle
+                if(y!= null && y.color == red)
+                {
+                    node.p.color = black;
+                    y.color = black;
+                    node.p.p.color = red;
+                    node = node.p.p;
+                }
+                 //second case uncle is black and the new node is the left child
+                else
+                {
+                    if(node == node.p.l)
+                    {
+                        node = node.p;
+                        this.RightRotation(node);
+                    }
+                    //third case
+                    node.p.color = black;
+                    node.p.p.color = red;
+                    this.LeftRotation(node.p.p);
+                } 
+            }
+        }
+        this.root.color = black;
     }
 
     private Node LeftRotation(Node node) {
@@ -205,7 +281,7 @@ public class BST {
                 }
             }
         }
-        if(colorOfDeletedNode == "black"){
+        if(colorOfDeletedNode == black){
             this.delete_fixup(x);
         }
         this.height = this.root == null ? -1 : this.root.h;
@@ -214,30 +290,30 @@ public class BST {
 
     private void delete_fixup(Node x){
         Node ww;
-        while(x != this.root && x.color == "black"){
+        while(x != this.root && x.color == black){
             if(x == x.p.l)
             {
                 ww = x.p.r;
-                if(ww.color == "red"){ //case 1
-                    ww.color = "black";
-                    x.p.color = "red";
+                if(ww.color == red){ //case 1
+                    ww.color = black;
+                    x.p.color = red;
                     this.LeftRotation(x.p);
                     ww = x.p.r;
                 }
-                if(ww.l.color == "black" && ww.r.color == "black"){ //case 2
-                    ww.color = "red";
+                if(ww.l.color == black && ww.r.color == black){ //case 2
+                    ww.color = red;
                     x = x.p;
                 }
                 else{
-                    if(ww.r.color == "black"){ //case 3
-                        ww.l.color = "black";
-                        ww.color = "red";
+                    if(ww.r.color == black){ //case 3
+                        ww.l.color = black;
+                        ww.color = red;
                         this.RightRotation(ww);
                         ww = x.p.r;
                     }
                     ww.color = x.p.color; //case 4
-                    x.p.color = "black";
-                    ww.r.color = "black";
+                    x.p.color = black;
+                    ww.r.color = black;
                     this.LeftRotation(x.p);
                     x = this.root;
                 }
@@ -245,32 +321,32 @@ public class BST {
             else
             {
                 ww = x.p.l;
-                if(ww.color == "red"){ //case 1
-                    ww.color = "black";
-                    x.p.color = "red";
+                if(ww.color == red){ //case 1
+                    ww.color = black;
+                    x.p.color = red;
                     this.RightRotation(x.p);
                     ww = x.p.l;
                 }
-                if(ww.r.color == "black" && ww.l.color == "black"){ //case 2
-                    ww.color = "red";
+                if(ww.r.color == black && ww.l.color == black){ //case 2
+                    ww.color = red;
                     x = x.p;
                 }
                 else{
-                    if(ww.l.color == "black"){ //case 3
-                        ww.r.color = "black";
-                        ww.color = "red";
+                    if(ww.l.color == black){ //case 3
+                        ww.r.color = black;
+                        ww.color = red;
                         this.LeftRotation(ww);
                         ww = x.p.l;
                     }
                     ww.color = x.p.color; //case 4
-                    x.p.color = "black";
-                    ww.l.color = "black";
+                    x.p.color = black;
+                    ww.l.color = black;
                     this.RightRotation(x.p);
                     x = this.root;
                 }
             }
         }
-        x.color = "black";
+        x.color = black;
     }
 
 
@@ -282,5 +358,22 @@ public class BST {
         current = current.l;
  
         return current;
+    }
+
+    public void printPreorder(Node node)
+    {
+        if (node == null){
+            return;
+        }
+            
+        
+        /* first print data of node */
+        System.out.println(node.word + " " + node.color + " " + node.h);
+ 
+        /* then recur on left subtree */
+        this.printPreorder(node.l);
+ 
+        /* now recur on right subtree */
+        this.printPreorder(node.r);
     }
 }
