@@ -223,65 +223,66 @@ public class BST {
     // Return true in case of success and false otherwise
     public boolean delete(String word){
         Node node = this.search(this.root, word);
-        Node x = null;
-        String colorOfDeletedNode;
         //if the word to be deleted is null return
         if(node == null){
             System.out.println(word + " not found");
             return false;
         }
-        else
+        Node x = null;
+        String colorOfDeletedNode = node.color;
+        //if the node has no children
+        Node parent = node.p;
+        if(node.l == null && node.r == null)
         {
-            colorOfDeletedNode = node.color;
-            //if the node has no children
-            Node parent = node.p;
-            if(node.l == null && node.r == null)
+            if(node == this.root)
             {
-                if(node == this.root)
-                {
-                    this.root = null;
-                }
-                else
-                {
-                    if(parent.l == node){parent.l = null;}
-                    else{parent.r = null;}
-                    node.p = null;
-                    this.update_height_for_deletion(parent);
-                }
-                this.size--;
+                this.root = null;
             }
-            //if the node has two children the successor will be the minimum value in the right subtree
-            else if(node.l != null && node.r != null)
-            {
-                Node successor = this.findMin(node.r);
-                String temp = successor.word;
-                this.delete(successor.word);
-                node.word = temp;
-            }
-            //if the node has only one child
             else
             {
-                Node child = node.l == null? node.r : node.l;
-                if(node == this.root)
-                {
-                    this.root = child;
-                    this.root.p = null;
-                    this.root.h--;
-                }
-                else
-                {
-                    child.p = parent;
-                    if(parent.l == node){
-                        parent.l = child;   
-                    }
-                    else{parent.r = child;}
-                    node.p = null;
-                    this.update_height_for_deletion(parent);
-                    this.size--;
-                }
+                if(parent.l == node){parent.l = null;}
+                else{parent.r = null;}
+                node.p = null;
+                this.update_height_for_deletion(parent);
             }
+            this.size--;
         }
-        if(colorOfDeletedNode == black){
+        //if the node has two children the successor will be the minimum value in the right subtree
+        else if(node.l != null && node.r != null)
+        {
+            Node successor = this.findMin(node.r);
+            String temp = successor.word;
+            this.delete(successor.word);
+            node.word = temp;
+            x = node;
+        }
+        //if the node has only one child
+        else
+        {
+            Node child = node.l == null? node.r : node.l;
+            if(node == this.root)
+            {
+                this.root = child;
+                this.root.p = null;
+                this.root.h--;
+            }
+            else
+            {
+                child.p = parent;
+                if(parent.l == node){
+                    parent.l = child;   
+                }
+                else{parent.r = child;}
+                node.p = null;
+                this.update_height_for_deletion(parent);
+                this.size--;
+            }
+            x = child;
+        }
+        // if the color of deleted node is black,
+        // it will violates the Red-Black property,
+        // calling delete_fixup() will maintain it
+        if(colorOfDeletedNode == "black" && x != null){
             this.delete_fixup(x);
         }
         this.height = this.root == null ? -1 : this.root.h;
