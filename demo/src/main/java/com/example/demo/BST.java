@@ -6,4 +6,6 @@ public interface BST {
     public Node getRoot();
     public int getSize();
     public Node search(Node node, String word);
+    public void setRoot(Node n);
+    public void setHeight(int n);
 }

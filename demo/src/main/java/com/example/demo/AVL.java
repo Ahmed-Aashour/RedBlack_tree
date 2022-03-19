@@ -28,7 +28,8 @@ public class AVL implements BST{
             size++; //increment the words number
         }
         else if (word.compareTo(node.word) == 0){ //word inserted before
-            System.out.println("ERROR: \"" + word + "\" is Already exist!!");}
+            // System.out.println("ERROR: \"" + word + "\" is Already exist!!");
+        }
         else{ //go down the tree
             if (word.compareTo(node.word) < 0){
                 Node lNode = insert(node.l, word); //GOTO left child
@@ -289,5 +290,15 @@ public class AVL implements BST{
         current = current.l;
  
         return current;
+    }
+
+    @Override
+    public void setRoot(Node n) {
+        this.root = n;
+    }
+
+    @Override
+    public void setHeight(int n) {
+        this.height = n;
     }
 }

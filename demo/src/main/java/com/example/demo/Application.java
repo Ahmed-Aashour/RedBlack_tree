@@ -1,15 +1,18 @@
 package com.example.demo;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Application {
-    public ArrayList<Long> times = new ArrayList<>();
-    public ArrayList<Long> rB = new ArrayList<>();
+    public ArrayList<Double> times = new ArrayList<>();
+    public ArrayList<Double> rB = new ArrayList<>();
     private BST tree;
     private BST redBlack;
     private boolean flag = false;
+
     public Application(BST avl, BST redBlack)
     {
         this.tree = avl;
@@ -17,17 +20,61 @@ public class Application {
     }
     private void Load()
     {
-        File file = new File("dictionary.txt");
-        try (Scanner myReader = new Scanner(file)) {
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                data = data.replace("\n", "").replace("\r", "");
-                this.insert(data);
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
+        //implement loop here
+        int j = 10;
+        while(j < 1000001)
+        {
+            // this.tree.setRoot(null);
+            // this.tree.setHeight(-1);
+            // this.redBlack.setRoot(null);
+            // this.redBlack.setHeight(-1);
+            this.tree = new AVL();
+            this.redBlack = new RedBlack();
+            ArrayList<Long> list = new ArrayList<>();
+            ArrayList<Long> list2 = new ArrayList<>();
+            for(int k = 0; k < j; k++)
+            {
+                String word = "";
+                for(int i = 0; i < 5; i++)
+                {
+                    word = word + alphabet.charAt((int)(Math.random()*26));
+                }
+                long start = System.nanoTime();
+                this.tree.insert(tree.getRoot(), word);
+                long end = System.nanoTime();
+                if(k != 0)
+                {
+                    list.add(end - start);
+                }
+                start = System.nanoTime();
+                this.redBlack.insert(redBlack.getRoot(), word);
+                end = System.nanoTime();
+                if(k != 0)
+                {
+                    list2.add(end - start);
+                }
+                
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            System.out.println("error reading dictionary");
+            Double Avg = list.stream().mapToDouble(a -> a).average().orElse(0.0);
+            System.out.println("Avg : " + Avg);
+            this.times.add(Avg);
+
+            Double Avg2 = list2.stream().mapToDouble(a -> a).average().orElse(0.0);
+            this.rB.add(Avg2);
+            j *= 10;
         }
+        // File file = new File("dictionary.txt");
+        // try (Scanner myReader = new Scanner(file)) {
+        //     while (myReader.hasNextLine()) {
+        //         String data = myReader.nextLine();
+        //         data = data.replace("\n", "").replace("\r", "");
+        //         this.insert(data);
+        //     }
+        // } catch (FileNotFoundException e) {
+        //     e.printStackTrace();
+        //     System.out.println("error reading dictionary");
+        // }
     }
 
     private void batchLookUp()
@@ -72,15 +119,16 @@ public class Application {
 
     private void insert(String word)
     {
-        long start = System.nanoTime();
-        this.tree.insert(tree.getRoot(), word);
-        long end = System.nanoTime();
-        if(this.flag)
-        {
-            this.rB.add(end - start);
-            return;
-        }
-        this.times.add(end - start);
+        
+        // long start = System.nanoTime();
+        // this.tree.insert(tree.getRoot(), word);
+        // long end = System.nanoTime();
+        // if(this.flag)
+        // {
+        //     this.rB.add(end - start);
+        //     return;
+        // }
+        // this.times.add(end - start);
     }
 
     private Node search(String word)
@@ -98,10 +146,10 @@ public class Application {
 
     private void delete(String word)
     {
-        long start = System.currentTimeMillis();
-        this.tree.delete(word);
-        long end = System.currentTimeMillis();
-        this.times.add(end - start);
+        // long start = System.currentTimeMillis();
+        // this.tree.delete(word);
+        // long end = System.currentTimeMillis();
+        // this.times.add(end - start);
     }
 
     public void startApplication()

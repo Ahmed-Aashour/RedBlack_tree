@@ -8,6 +8,7 @@ import org.jfree.chart.block.BlockBorder;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.XYSplineRenderer;
 import org.jfree.chart.title.TextTitle;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYSeries;
@@ -19,17 +20,34 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
 
 public class LineChartEx extends JFrame {
 
-    public ArrayList<Long> data;
-    public ArrayList<Long> avl;
-    public LineChartEx(ArrayList<Long> data, ArrayList<Long> avl) {
+    public ArrayList<Double> data;
+    public ArrayList<Double> avl;
+    private FileWriter avlWriter;
+    private FileWriter RBWriter;
+    public LineChartEx(ArrayList<Double> data, ArrayList<Double> avl) {
         this.avl = avl;
         this.data = data;
+        File AVL = new File("avl.txt");
+        try {
+            AVL.createNewFile();
+            this.avlWriter=new FileWriter(AVL);    
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        File RB = new File("RB.txt");
+        try {
+            RB.createNewFile();
+            this.RBWriter=new FileWriter(RB);  
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         initUI();
     }
 
@@ -52,28 +70,23 @@ public class LineChartEx extends JFrame {
     private XYDataset createDataset() {
 
         Double rbAvg = this.data.stream().mapToDouble(a -> a).average().orElse(0.0);
-        System.out.println(rbAvg);
         XYSeries series = new XYSeries("redBlack (average = " + Math.round(rbAvg) + ")");
+        int j = 10;
         for (int i = 1; i <= this.data.size(); i++)
         {
-            if(i == 1)
-            {
-                continue;
-            }
-            series.add(i, this.data.get(i-1));
+            System.out.println( j + " " + this.data.get(i-1));
+            series.add(j, this.data.get(i-1));
+            j*=10;
         }
         
 
         Double avlAvg = this.avl.stream().mapToDouble(a -> a).average().orElse(0.0);
-        System.out.println(avlAvg);
         XYSeries series2 = new XYSeries("AVL (average = " + Math.round(avlAvg) + ")");
+        j = 10;
         for (int i = 1; i <= this.avl.size(); i++)
         {
-            if(i == 1)
-            {
-                continue;
-            }
-            series2.add(i, this.avl.get(i-1));
+            series2.add(j, this.avl.get(i-1));
+            j*=10;
         }
         XYSeriesCollection dataset = new XYSeriesCollection();
         dataset.addSeries(series);
@@ -131,9 +144,9 @@ public class LineChartEx extends JFrame {
         EventQueue.invokeLater(new Runnable() {
             public void run()
             {
-                RedBlack tree = new RedBlack();
+                RedBlack redblack = new RedBlack();
                 AVL avl = new AVL();
-                Application app = new Application(avl, tree);
+                Application app = new Application(avl, redblack);
                 app.startApplication();
                 LineChartEx ex = new LineChartEx(app.rB,app.times);
                 ex.setVisible(true);
