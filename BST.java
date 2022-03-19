@@ -228,7 +228,6 @@ public class BST {
             System.out.println(word + " not found");
             return false;
         }
-        // Node Replacement = null;
         String colorOfDeletedNode = node.color;
         //if the node has no children
         Node parent = node.p;
@@ -243,15 +242,13 @@ public class BST {
                 Node s = new Node(parent, black);
                 if(parent.l == node){
                     parent.l = s;
-                    //fixing-up
-                    if(colorOfDeletedNode == black){
+                    if(colorOfDeletedNode == black){ //fixing-up
                         this.delete_fixup(parent.l);
                     }
                 }
                 else{
                     parent.r = s;
-                    //fixing-up
-                    if(colorOfDeletedNode == black){
+                    if(colorOfDeletedNode == black){ //fixing-up
                         this.delete_fixup(parent.r);
                     }
                 }
@@ -295,8 +292,7 @@ public class BST {
                 this.update_height_for_deletion(parent);
                 this.size--;
             }
-            //fixing-up
-            if(colorOfDeletedNode == black){
+            if(colorOfDeletedNode == black){ //fixing-up
                 this.delete_fixup(child);
             }
         }
@@ -307,64 +303,58 @@ public class BST {
     private void delete_fixup(Node node){
         Node sib; //sibling
         while(node != this.root && node.color == black){
+            //The node is a left child
             if(node == node.p.l)
             {
-                // System.out.println("-->left child");
                 sib = node.p.r;
-                if(sib.color == red){ //case 1
-                    // System.out.println("case 1");
+                if(sib.color == red){ //case 1 - sibling's color is red
                     sib.color = black;
                     node.p.color = red;
                     this.LeftRotation(node.p);
                     sib = node.p.r;
                 }
-                if( (sib.l == null || sib.l.color == black) &&  (sib.r == null || sib.r.color == black)){ //case 2
-                    // System.out.println("case 2");
+                //case 2 - sibling's two children are black
+                if( (sib.l == null || sib.l.color == black) &&  (sib.r == null || sib.r.color == black)){
                     sib.color = red;
                     node = node.p;
                 }
                 else{
-                    if(sib.r == null || sib.r.color == black){ //case 3
-                        // System.out.println("case 3");
+                    if(sib.r == null || sib.r.color == black){ //case 3 - sibling's right child color is black
                         sib.l.color = black;
                         sib.color = red;
                         this.RightRotation(sib);
                         sib = node.p.r;
                     }
-                    // System.out.println("case 4");
-                    sib.color = node.p.color; //case 4
+                    sib.color = node.p.color; //case 4 - sibling's right child color is red
                     node.p.color = black;
                     sib.r.color = black;
                     this.LeftRotation(node.p);
                     node = this.root;
                 }
             }
+            //The node is a right child
             else
             {
-                // System.out.println("right child");
                 sib = node.p.l;
-                if(sib.color == red){ //case 1
-                    // System.out.println("case 1");
+                if(sib.color == red){ //case 1 - sibling's color is red
                     sib.color = black;
                     node.p.color = red;
                     this.RightRotation(node.p);
                     sib = node.p.l;
                 }
-                if((sib.r == null || sib.r.color == black) && (sib.l == null || sib.l.color == black)){ //case 2
-                    // System.out.println("case 2");
+                //case 2 - sibling's two children are black
+                if((sib.r == null || sib.r.color == black) && (sib.l == null || sib.l.color == black)){
                     sib.color = red;
                     node = node.p;
                 }
                 else{
-                    if(sib.l == null || sib.l.color == black){ //case 3
-                        // System.out.println("case 3");
+                    if(sib.l == null || sib.l.color == black){ //case 3 - sibling's left child color is black
                         sib.r.color = black;
                         sib.color = red;
                         this.LeftRotation(sib);
                         sib = node.p.l;
                     }
-                    // System.out.println("case 4");
-                    sib.color = node.p.color; //case 4
+                    sib.color = node.p.color; //case 4 - sibling's left child color is red
                     node.p.color = black;
                     sib.l.color = black;
                     this.RightRotation(node.p);
@@ -372,7 +362,7 @@ public class BST {
                 }
             }
         }
-        node.color = black;
+        node.color = black; //color the root with black
     }
 
 
